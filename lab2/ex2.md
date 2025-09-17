@@ -1,0 +1,6 @@
+1. If the data is uniformly distributed, then interpolation search picks a value that will be much closer to the target value. Interpolation search also doesn’t blindly halve the data like binary search, but picks an intelligent spot to divide away unnecessary values.
+2. If the distribution is closer to uniform, then interpolation will still probably be better than binary search; however, if the distribution becomes non-uniform enough, then binary search becomes the better option for finding values.
+3. If the distribution was non-uniform, but known, interpolation search could still work if you modify the part of the code that picks the position to match the distribution.
+4. Linear search would have to be used for unstructured data where you can’t use indices; an example of this is searching a linked list.
+5. If a list starts with what you are searching for and is not uniformly distributed, then linear search will outperform binary and interpolation search.
+6. We already talked about the way to fix interpolation search for non-uniform distributions (change how it selects the position). What's being search for being in the first position would be the worst case for binary search; I would say that there’s no way to improve binary search for this case without changing it to some other type of search, like interpolation or tertiary search.
