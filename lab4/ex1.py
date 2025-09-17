@@ -1,50 +1,49 @@
-
 import time
-import random
 import matplotlib.pyplot as plt
+import numpy as np
 
-class Node:
-    def __init__(self, data):
-        self.data = data
+class ListNode:
+    def __init__(self, value):
+        self.value = value
         self.next = None
 
 class LinkedList:
     def __init__(self):
         self.head = None
-
-    def append(self, data):
-        if not self.head:
-            self.head = Node(data)
+    
+    def append(self, value):
+        if self.head is None:
+            self.head = ListNode(value)
             return
-        current = self.head
-        while current.next:
-            current = current.next
-        current.next = Node(data)
-
-    def get_middle(self, start, end):
-        slow, fast = start, start
-        while fast != end and fast.next != end:
-            slow = slow.next
-            fast = fast.next.next
-        return slow
-
+        temp = self.head
+        while temp.next:
+            temp = temp.next
+        temp.next = ListNode(value)
+    
     def binary_search(self, target):
-        start, end = self.head, None
-        while start != end:
-            mid = self.get_middle(start, end)
-            if mid is None:
-                return False
-            if mid.data == target:
+       
+        values = []
+        temp = self.head
+        while temp:
+            values.append(temp.value)
+            temp = temp.next
+        
+        #  binary search on the array
+        left, right = 0, len(values) - 1
+        while left <= right:
+            mid = (left + right) // 2
+            if values[mid] == target:
                 return True
-            elif mid.data < target:
-                start = mid.next
+            elif values[mid] < target:
+                left = mid + 1
             else:
-                end = mid
+                right = mid - 1
         return False
 
 class Array:
-    def __init__(self, elements):
-        self.data = sorted(elements)
+    def __init__(self, data):
+        self.data = sorted(data)  
+        # sorted data for binary search
 
     def binary_search(self, target):
         left, right = 0, len(self.data) - 1
@@ -58,41 +57,47 @@ class Array:
                 right = mid - 1
         return False
 
-def measure_search_performance():
+def compare_search_times():
     sizes = [1000, 2000, 4000, 8000]
-    linked_list_times = []
-    array_times = []
-    
+    linked_list_durations = []
+    array_durations = []
+
     for size in sizes:
-        numbers = sorted(random.sample(range(size * 10), size))
-        target = numbers[size // 2]
-        
-        # Measure Linked List
+        dataset = list(range(size))  # Sorted data
+
+        #  linked list
         linked_list = LinkedList()
-        for num in numbers:
-            linked_list.append(num)
+        for item in dataset:
+            linked_list.append(item)
         
-        start_time = time.time()
-        linked_list.binary_search(target)
-        linked_list_times.append(time.time() - start_time)
+        #  array
+        array_wrapper = Array(dataset)
         
-        # Measure Array
-        array = Array(numbers)
-        start_time = time.time()
-        array.binary_search(target)
-        array_times.append(time.time() - start_time)
+        # Time linked list search
+        start = time.time()
+        linked_list.binary_search(size // 2)
+        linked_list_durations.append(time.time() - start)
+        
+        # Time array search
+        start = time.time()
+        array_wrapper.binary_search(size // 2)
+        array_durations.append(time.time() - start)
     
-    # Plot Results
-    plt.figure(figsize=(8, 5))
-    plt.plot(sizes, linked_list_times, marker='o', label='Linked List Binary Search')
-    plt.plot(sizes, array_times, marker='s', label='Array Binary Search')
-    plt.xlabel("Input Size")
-    plt.ylabel("Time (seconds)")
+    # Plot performance comparison
+    plt.plot(sizes, linked_list_durations, marker='o', label='Linked List')
+    plt.plot(sizes, array_durations, marker='s', label='Array')
+    plt.xlabel('Data Size')
+    plt.ylabel('Time (seconds)')
+    plt.title('Performance of Binary Search in Linked List vs Array')
     plt.legend()
-    plt.title("Binary Search Performance: Linked List vs Array")
     plt.show()
 
-# Run performance test
-measure_search_performance()
-# 1.4The complexity binary search for linked list is o(n).
 
+"""
+Ex1.4 Binary search in an array is O(log n) because elements are directly accessible by index.
+For a linked list, finding the middle element requires O(n), making the overall complexity O(n).
+This makes binary search in a linked list significantly slower than in an array.
+"""
+
+if __name__ == "__main__":
+    compare_search_times()
